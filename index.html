@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Rectangle Area dApp</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.6.0/dist/ethers.umd.min.js"></script>
+</head>
+
+<body>
+
+<h2>Rectangle Area dApp</h2>
+
+<button id="connectButton">Connect Wallet</button>
+<br><br>
+
+<label>Width:</label>
+<input id="widthInput" type="number" min="1" />
+<button id="setWidthButton">Set Width BC220504500</button>
+<br><br>
+
+<label>Height:</label>
+<input id="heightInput" type="number" min="1" />
+<button id="setHeightButton">Set Height BC220504500</button>
+<br><br>
+
+<button id="areaButton">Area BC220504500</button>
+
+<h2 id="result"></h2>
+
+<script>
+const CONTRACT_ADDRESS = "0x74c0F99a0Ad3C9669B1480ee5e73d7bA42F4D984";
+
+const ABI = [
+  {"inputs":[{"internalType":"uint256","name":"h","type":"uint256"}],"name":"setHeight","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"internalType":"uint256","name":"w","type":"uint256"}],"name":"setWidth","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[],"name":"area","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"getHeight","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"getWidth","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}
+];
+
+let provider;
+let signer;
+let contract;
+
+// CONNECT WALLET
+document.getElementById("connectButton").onclick = async () => {
+  await ethereum.request({ method: "eth_requestAccounts" });
+  provider = new ethers.BrowserProvider(window.ethereum);
+  signer = await provider.getSigner();
+  contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+  alert("Wallet connected!");
+};
+
+// SET WIDTH
+document.getElementById("setWidthButton").onclick = async () => {
+  const w = document.getElementById("widthInput").value;
+  const tx = await contract.setWidth(w);
+  await tx.wait();
+  alert("Width set!");
+};
+
+// SET HEIGHT
+document.getElementById("setHeightButton").onclick = async () => {
+  const h = document.getElementById("heightInput").value;
+  const tx = await contract.setHeight(h);
+  await tx.wait();
+  alert("Height set!");
+};
+
+// AREA
+document.getElementById("areaButton").onclick = async () => {
+  const a = await contract.area();
+  document.getElementById("result").innerText = "Area = " + a;
+};
+</script>
+
+</body>
+</html>
